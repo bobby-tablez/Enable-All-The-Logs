@@ -11,3 +11,5 @@ This script performs the following actions:
 * Enables event ID 4688
 * Enables command line logging into 4688
 * Enables GPO audit policies based on https://www.ultimatewindowssecurity.com/wiki/page.aspx?spid=RecBaselineAudPol
+
+Disclaimer: Use at your own risk!
