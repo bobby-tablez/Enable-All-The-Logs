@@ -12,4 +12,9 @@ This script performs the following actions:
 * Enables command line logging into 4688
 * Enables GPO audit policies based on https://www.ultimatewindowssecurity.com/wiki/page.aspx?spid=RecBaselineAudPol
 
+### Quick 'n easy:
+```powershell
+iex(iwr https://raw.githubusercontent.com/bobby-tablez/Enable-All-The-Logs/main/enable_logs.ps1 -UseBasicParsing)
+```
+
 Disclaimer: Use at your own risk!
