@@ -58,9 +58,9 @@ $PSregValName = "EnableScriptBlockLogging"
 $PSregValDat = 1
 
 if (-not (Test-Path $PSregPath)) {
-    New-Item -Path $PSregPath -ItemType Directory -Force
+    New-Item -Path $PSregPath -ItemType Directory -Force  | Out-Null
 }
-Set-ItemProperty -Path $PSregPath -Name $PSregValName -Value $PSregValDat -Type DWord
+Set-ItemProperty -Path $PSregPath -Name $PSregValName -Value $PSregValDat -Type DWord  | Out-Null
 
 Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] PowerShell Script Block Logging enabled!"
 
