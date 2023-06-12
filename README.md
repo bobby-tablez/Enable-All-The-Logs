@@ -1,6 +1,6 @@
 # Enable All The Logs!
 ![example image](https://raw.githubusercontent.com/bobby-tablez/Enable-All-The-Logs/main/enable_all_the_logs.png?raw=true) 
-This script is designed to be used in lab environments where logging is critical for building detections or malware analysis. This can be used in production, however you might want to tune the GPO edits as needed. This was mostly designed to save time when spinning up new hosts in a lab environment. 
+This script is designed to be used in lab environments (or production if you are careful) where logging is critical for building detections or malware analysis. This can be used in production, however you might want to tune the GPO edits as needed. This was mostly designed to save time when spinning up new hosts in a lab environment. 
 
 Tested on Windows Server 2019/2022 and Windows 10/11
 
