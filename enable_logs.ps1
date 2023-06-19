@@ -7,8 +7,8 @@ if (-not($confirmation -eq 'y')) {
 }
 
 $cm = [char]0x2713
+$ex = [char]0x274C
 
-# Download, install and configure Sysmon (uninstall and reinstall if present)
 $sysmonURL = "https://download.sysinternals.com/files/Sysmon.zip"
 $sysmonOut = "$env:temp\Sysmon.zip"
 
@@ -16,13 +16,31 @@ $sysmonConf = "https://raw.githubusercontent.com/bobby-tablez/FT-Sysmon-Config/m
 $sysmonConfOut = "$env:temp\ft-sysmonconfig-export.xml"
 
 Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Downloading Sysmon..."
-Invoke-WebRequest -URI $sysmonURL -OutFile $sysmonOut
+try { 
+    Invoke-WebRequest -URI $sysmonURL -OutFile $sysmonOut
+    Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Sysmon downloaded..."
+} catch {
+    $errorSysmon = $_.Exception.Message
+    Write-Host "[ " -nonewline; Write-Host $ex -f red -nonewline; Write-Host " ] Error occurred while downloading Sysmon: $errorSysmon"
+}
 
 Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Downloading Sysmon config import file..."
-Invoke-WebRequest -URI $sysmonConf -OutFile $sysmonConfOut
+try { 
+    Invoke-WebRequest -URI $sysmonConf -OutFile $sysmonConfOut
+    Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Import config file downloaded..."
+} catch {
+    $errorXML = $_.Exception.Message
+    Write-Host "[ " -nonewline; Write-Host $ex -f red -nonewline; Write-Host " ] Error occurred while downloading the config import file: $errorXML"
+}
 
 Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Extracting Sysmon archive..."
-Expand-Archive $sysmonOut -Destination $env:temp -Force
+try { 
+    Expand-Archive $sysmonOut -Destination $env:temp -ErrorAction Stop -Force
+    Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Sysmon archive extracted..."
+} catch {
+    $errorZIP = $_.Exception.Message
+    Write-Host "[ " -nonewline; Write-Host $ex -f red -nonewline; Write-Host " ] Error occurred while extracting the Sysmon archive: $errorZIP"
+}
 
 Function b64{
     $b64test = [Environment]::Is64BitOperatingSystem
