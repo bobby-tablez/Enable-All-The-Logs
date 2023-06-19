@@ -140,4 +140,8 @@ Invoke-Expression -Command "auditpol /set /subcategory:`"Kerberos Service Ticket
 Invoke-Expression -Command "auditpol /set /subcategory:`"Other Account Logon Events`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
 Invoke-Expression -Command "auditpol /set /subcategory:`"Kerberos Authentication Service`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
 
+# Upate GPOs
+Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Updating GPOs using gpupdate..."
+Invoke-Expression -Command "gpupdate /force" | Out-Null
+
 Write-Host -f green "`nDone!"
