@@ -61,8 +61,19 @@ if (-not (Test-Path $PSregPath)) {
     New-Item -Path $PSregPath -ItemType Directory -Force  | Out-Null
 }
 Set-ItemProperty -Path $PSregPath -Name $PSregValName -Value $PSregValDat -Type DWord  | Out-Null
-
 Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] PowerShell Script Block Logging enabled!"
+
+Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Enabling PowerShell module logging..."
+$PSMregPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ModuleLogging"
+$PSMregValName = "EnableModuleLogging"
+$PSMregValDat = 1
+
+if (-not (Test-Path $PSMregPath)) {
+    New-Item -Path $PSMregPath -ItemType Directory -Force  | Out-Null
+}
+Set-ItemProperty -Path $PSMregPath -Name $PSMregValName -Value $PSMregValDat -Type DWord  | Out-Null
+
+Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] PowerShell Module Logging enabled!"
 
 
 # Enabling EventID 4688 with command line logging
