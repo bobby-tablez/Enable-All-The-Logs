@@ -16,6 +16,8 @@ This script performs the following actions:
 
 The ` -sysmononly` parameter can be passed into the script if your goal is to only download and install Sysmon. Otherwise, running the script without any parameters will install Sysmon, enable PowerShell script block/module logging and make GPO changes.
 
+The ` -y` parameter can also be used to skip the prompt message.
+
 ### Quick 'n easy:
 ```powershell
 iex(iwr https://raw.githubusercontent.com/bobby-tablez/Enable-All-The-Logs/main/enable_logs.ps1 -UseBasicParsing)
