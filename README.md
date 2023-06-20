@@ -12,9 +12,33 @@ This script performs the following actions:
 * Enables command line logging into 4688
 * Enables GPO audit policies based on https://www.ultimatewindowssecurity.com/wiki/page.aspx?spid=RecBaselineAudPol
 
+### Usage
+
+The ` -sysmononly` parameter can be passed into the script if your goal is to only download and install Sysmon. Otherwise, running the script without any parameters will install Sysmon, enable PowerShell script block/module logging and make GPO changes.
+
 ### Quick 'n easy:
 ```powershell
 iex(iwr https://raw.githubusercontent.com/bobby-tablez/Enable-All-The-Logs/main/enable_logs.ps1 -UseBasicParsing)
+```
+### Script to check for Sysmon install. Deploy it if not present:
+```powershell
+#Requires -RunAsAdministrator
+$sysmonProc = Get-Process -Name  Sysmon* -ErrorAction SilentlyContinue
+
+if ($sysmonProc) {
+    Write-Host "Sysmon is already installed! Quitting..."
+    Start-Sleep -Seconds 2
+} else {
+    $Url = "https://raw.githubusercontent.com/bobby-tablez/Enable-All-The-Logs/main/enable_logs.ps1"
+    $script = "$env:TMP\enable_logs.ps1"
+    
+    Invoke-WebRequest -Uri $Url -OutFile $Path -UseBasicParsing
+    $run = "$script -sysmononly"
+    Invoke-Expression $run
+
+    Start-Sleep -Seconds 2
+    Remove-Item $script
+}
 ```
 
 Disclaimer: Use at your own risk!
