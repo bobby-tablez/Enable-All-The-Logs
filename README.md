@@ -32,7 +32,7 @@ if ($sysmonProc) {
     $Url = "https://raw.githubusercontent.com/bobby-tablez/Enable-All-The-Logs/main/enable_logs.ps1"
     $script = "$env:TMP\enable_logs.ps1"
     
-    Invoke-WebRequest -Uri $Url -OutFile $Path -UseBasicParsing
+    Invoke-WebRequest -Uri $Url -OutFile $script -UseBasicParsing
     $run = "$script -sysmononly"
     Invoke-Expression $run
 
