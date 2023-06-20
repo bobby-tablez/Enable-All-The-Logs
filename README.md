@@ -33,7 +33,7 @@ if ($sysmonProc) {
     $script = "$env:TMP\enable_logs.ps1"
     
     Invoke-WebRequest -Uri $Url -OutFile $script -UseBasicParsing
-    $run = "$script -sysmononly"
+    $run = "$script -sysmononly -y"
     Invoke-Expression $run
 
     Start-Sleep -Seconds 2
