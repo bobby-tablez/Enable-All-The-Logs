@@ -1,18 +1,21 @@
 #Requires -RunAsAdministrator
 
 param(
-    [switch]$sysmononly
+    [switch]$sysmononly,
+    [switch]$y
 )
 
-if ($sysmononly){
-    $confirmation = $(Write-Host -f Yellow -NoNewLine "WARNING: This script will download and install Sysmon. Do you want to continue? (y/n): "; Read-Host)
-}else {
-    $confirmation = $(Write-Host -f Yellow -NoNewLine "WARNING: This script will download and install Sysmon, and make GPO changes that will increase log volume on the host. Do you want to continue? (y/n): "; Read-Host)
-}
+if (-Not $y){
+    if ($sysmononly){
+        $confirmation = $(Write-Host -f Yellow -NoNewLine "WARNING: This script will download and install Sysmon. Do you want to continue? (y/n): "; Read-Host)
+    }else {
+        $confirmation = $(Write-Host -f Yellow -NoNewLine "WARNING: This script will download and install Sysmon, and make GPO changes that will increase log volume on the host. Do you want to continue? (y/n): "; Read-Host)
+    }
 
-if (-not($confirmation -eq 'y')) {
-    Write-Host "`nBye!"
-    Exit
+    if (-not($confirmation -eq 'y')) {
+        Write-Host "`nBye!"
+        Exit
+    }
 }
 
 $cm = [char]0x2713
