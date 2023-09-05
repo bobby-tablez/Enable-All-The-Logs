@@ -130,20 +130,20 @@ if (-Not $sysmononly){
     # Enabling other audit policies which might be useful (tune if required). Based on: https://www.ultimatewindowssecurity.com/wiki/page.aspx?spid=RecBaselineAudPol
     Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Enabling other useful audit policies..."
 
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Security State Change`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
+    Invoke-Expression -Command "auditpol /set /subcategory:`"Security State Change`" /success:$DisableAudit /failure:$DisableAudit" | Out-Null
     Invoke-Expression -Command "auditpol /set /subcategory:`"Security System Extension`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"System Integrity`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
+    Invoke-Expression -Command "auditpol /set /subcategory:`"System Integrity`" /success:$EnableAudit /failure:$DisableAudit" | Out-Null
     Invoke-Expression -Command "auditpol /set /subcategory:`"IPsec Driver`" /success:$DisableAudit /failure:$DisableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Other System Events`" /success:$DisableAudit /failure:$EnableAudit" | Out-Null
+    Invoke-Expression -Command "auditpol /set /subcategory:`"Other System Events`" /success:$DisableAudit /failure:$DisableAudit" | Out-Null
     Invoke-Expression -Command "auditpol /set /subcategory:`"Logon`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
     Invoke-Expression -Command "auditpol /set /subcategory:`"Logoff`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
     Invoke-Expression -Command "auditpol /set /subcategory:`"Account Lockout`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
     Invoke-Expression -Command "auditpol /set /subcategory:`"IPsec Main Mode`" /success:$DisableAudit /failure:$DisableAudit" | Out-Null
     Invoke-Expression -Command "auditpol /set /subcategory:`"IPsec Quick Mode`" /success:$DisableAudit /failure:$DisableAudit" | Out-Null
     Invoke-Expression -Command "auditpol /set /subcategory:`"IPsec Extended Mode`" /success:$DisableAudit /failure:$DisableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Special Logon`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
+    Invoke-Expression -Command "auditpol /set /subcategory:`"Special Logon`" /success:$DisableAudit /failure:$DisableAudit" | Out-Null
     Invoke-Expression -Command "auditpol /set /subcategory:`"Other Logon/Logoff Events`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Network Policy Server`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
+    Invoke-Expression -Command "auditpol /set /subcategory:`"Network Policy Server`" /success:$DisableAudit /failure:$DisableAudit" | Out-Null
     Invoke-Expression -Command "auditpol /set /subcategory:`"File System`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
     Invoke-Expression -Command "auditpol /set /subcategory:`"Registry`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
     Invoke-Expression -Command "auditpol /set /subcategory:`"Kernel Object`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
@@ -153,13 +153,13 @@ if (-Not $sysmononly){
     Invoke-Expression -Command "auditpol /set /subcategory:`"Handle Manipulation`" /success:$DisableAudit /failure:$DisableAudit" | Out-Null
     Invoke-Expression -Command "auditpol /set /subcategory:`"File Share`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
     Invoke-Expression -Command "auditpol /set /subcategory:`"Filtering Platform Packet Drop`" /success:$DisableAudit /failure:$DisableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Filtering Platform Connection`" /success:$DisableAudit /failure:$DisableAudit" | Out-Null
+    Invoke-Expression -Command "auditpol /set /subcategory:`"Filtering Platform Connection`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
     Invoke-Expression -Command "auditpol /set /subcategory:`"Other Object Access Events`" /success:$DisableAudit /failure:$DisableAudit" | Out-Null
     Invoke-Expression -Command "auditpol /set /subcategory:`"Sensitive Privilege Use`" /success:$DisableAudit /failure:$DisableAudit" | Out-Null
     Invoke-Expression -Command "auditpol /set /subcategory:`"Non Sensitive Privilege Use`" /success:$DisableAudit /failure:$DisableAudit" | Out-Null
     Invoke-Expression -Command "auditpol /set /subcategory:`"Other Privilege Use Events`" /success:$DisableAudit /failure:$DisableAudit" | Out-Null
     Invoke-Expression -Command "auditpol /set /subcategory:`"Process Termination`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"DPAPI Activity`" /success:$DisableAudit /failure:$DisableAudit" | Out-Null
+    Invoke-Expression -Command "auditpol /set /subcategory:`"DPAPI Activity`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
     Invoke-Expression -Command "auditpol /set /subcategory:`"RPC Events`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
     Invoke-Expression -Command "auditpol /set /subcategory:`"Audit Policy Change`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
     Invoke-Expression -Command "auditpol /set /subcategory:`"Authentication Policy Change`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
@@ -175,7 +175,7 @@ if (-Not $sysmononly){
     Invoke-Expression -Command "auditpol /set /subcategory:`"Other Account Management Events`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
     Invoke-Expression -Command "auditpol /set /subcategory:`"Directory Service Access`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
     Invoke-Expression -Command "auditpol /set /subcategory:`"Directory Service Changes`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Directory Service Replication`" /success:$DisableAudit /failure:$DisableAudit" | Out-Null
+    Invoke-Expression -Command "auditpol /set /subcategory:`"Directory Service Replication`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
     Invoke-Expression -Command "auditpol /set /subcategory:`"Detailed Directory Service Replication`" /success:$DisableAudit /failure:$DisableAudit" | Out-Null
     Invoke-Expression -Command "auditpol /set /subcategory:`"Credential Validation`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
     Invoke-Expression -Command "auditpol /set /subcategory:`"Kerberos Service Ticket Operations`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
