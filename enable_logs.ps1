@@ -1,3 +1,24 @@
+<# 
+.SYNOPSIS
+    Enables detailed logging telemetry for a host. 
+.DESCRIPTION 
+     This module provides a large amount of logging telemetry. This includes Sysinternals Sysmon, PowerShell module and scriptblock logging, and audit policies for key event IDs. This script can be modified to suit organizational needs, however it should be tested first as it can generate a huge amount of log data depending on the host.
+.NOTES 
+    Use at your own risk.
+.LINK 
+    https://raw.githubusercontent.com/bobby-tablez/Invoke-XORfuscation/main/Invoke-XORfuscation.ps1
+    https://www.securonix.com/blog/improving-blue-team-threat-detection-with-enhanced-siem-telemetry/
+.Parameter -sysmononly 
+    This will ONLY download and install sysmon. If sysmon is already present, it will perform a reinstall using the provided XML import config file.    
+.Example 
+    enable_logs.ps1 -sysmononly
+.Parameter -y 
+    This will skip the "are you sure?" prompt upon initial execution.
+.Example 
+    enable_logs.ps1 -y
+    enable_logs.ps1 -y -sysmononly
+#>
+
 #Requires -RunAsAdministrator
 
 param(
