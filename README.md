@@ -43,5 +43,5 @@ if ($sysmonProc) {
     Remove-Item $script
 }
 ```
-
+Additional reference: https://www.securonix.com/blog/improving-blue-team-threat-detection-with-enhanced-siem-telemetry/
 Disclaimer: Feel free to fork and use at your own risk!
