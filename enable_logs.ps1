@@ -1,4 +1,10 @@
-<# 
+<#PSScriptInfo
+.VERSION 
+    1.1
+.AUTHOR
+    bobby-tablez
+.GUID
+    a5d40ad0-297b-4269-80f9-934f6341367c
 .SYNOPSIS
     Enables detailed logging telemetry for a host. 
 .DESCRIPTION 
@@ -8,15 +14,35 @@
 .LINK 
     https://raw.githubusercontent.com/bobby-tablez/Invoke-XORfuscation/main/Invoke-XORfuscation.ps1
     https://www.securonix.com/blog/improving-blue-team-threat-detection-with-enhanced-siem-telemetry/
-.Parameter -sysmononly 
+.PARAMETER -sysmononly 
     This will ONLY download and install sysmon. If sysmon is already present, it will perform a reinstall using the provided XML import config file.    
-.Example 
+.EXAMPLE 
     enable_logs.ps1 -sysmononly
-.Parameter -y 
+.PARAMETER -y 
     This will skip the "are you sure?" prompt upon initial execution.
-.Example 
+.EXAMPLE 
     enable_logs.ps1 -y
     enable_logs.ps1 -y -sysmononly
+.COMPANYNAME
+
+.COPYRIGHT
+
+.TAGS
+
+.LICENSEURI
+
+.PROJECTURI
+
+.ICONURI
+
+.EXTERNALMODULEDEPENDENCIES
+
+.REQUIREDSCRIPTS
+
+.EXTERNALSCRIPTDEPENDENCIES
+
+.RELEASENOTES
+
 #>
 
 #Requires -RunAsAdministrator
