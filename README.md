@@ -19,9 +19,9 @@ The ` -sysmononly` parameter can be passed into the script if your goal is to on
 
 The ` -y` parameter can also be used to skip the prompt message.
 
-### Quick 'n easy:
+### Execute via PowerShell:
 ```powershell
-iex(iwr https://raw.githubusercontent.com/bobby-tablez/Enable-All-The-Logs/main/enable_logs.ps1 -UseBasicParsing)
+irm https://raw.githubusercontent.com/bobby-tablez/Enable-All-The-Logs/main/enable_logs.ps1|iex
 ```
 ### Script to check for Sysmon install. Deploy it if not present:
 ```powershell
