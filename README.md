@@ -15,9 +15,11 @@ This script performs the following actions:
 
 ### Usage
 
-The ` -sysmononly` parameter can be passed into the script if your goal is to only download and install Sysmon. Otherwise, running the script without any parameters will install Sysmon, enable PowerShell script block/module logging and make GPO changes.
+The ` -sysmononly` argument can be passed into the script if your goal is to only download and install Sysmon. Otherwise, running the script without any parameters will install Sysmon, enable PowerShell script block/module logging and make GPO changes.
 
-The ` -y` parameter can also be used to skip the prompt message.
+The ` -y` argument can also be used to skip the prompt message.
+
+The ` -config` argument is used to supply your own Sysmon XML config file, rather than the default mentioned above.
 
 ### Execute via PowerShell:
 ```powershell
