@@ -23,6 +23,12 @@
 .EXAMPLE 
     enable_logs.ps1 -y
     enable_logs.ps1 -y -sysmononly
+.PARAMETER -config
+    Bring your own XML config file. When the -config argument is passed, supply a direct URL to a Sysmon config import file. When no argument is supplied it will download: "https://raw.githubusercontent.com/bobby-tablez/FT-Sysmon-Config/master/ft-sysmonconfig-export.xml"
+.EXAMPLE 
+    enable_logs.ps1 -y
+    enable_logs.ps1 -y -sysmononly
+    enable_logs.ps1 -y -sysmononly -config https://raw.githubusercontent.com/SwiftOnSecurity/sysmon-config/master/sysmonconfig-export.xml
 .COMPANYNAME
 
 .COPYRIGHT
@@ -49,9 +55,11 @@
 
 param(
     [switch]$sysmononly,
-    [switch]$y
+    [switch]$y,
+    [string]$config
 )
 
+# Bypass the warning prompt when -y arguement is supplied
 if (-Not $y){
     if ($sysmononly){
         $confirmation = $(Write-Host -f Yellow -NoNewLine "WARNING: This script will download and install Sysmon. Do you want to continue? (y/n): "; Read-Host)
@@ -65,40 +73,57 @@ if (-Not $y){
     }
 }
 
+# checkmark characters green/red
 $cm = [char]0x2713
 $ex = [char]0x274C
 
 $sysmonURL = "https://download.sysinternals.com/files/Sysmon.zip"
 $sysmonOut = "$env:temp\Sysmon.zip"
+$sysmonConfOut = "$env:temp\sysmon-config.xml"
 
-$sysmonConf = "https://raw.githubusercontent.com/bobby-tablez/FT-Sysmon-Config/master/ft-sysmonconfig-export.xml"
-$sysmonConfOut = "$env:temp\ft-sysmonconfig-export.xml"
+# Use user-supplied config import file if -config arguement is supplied
+if ($config) {
+    $sysmonConf = $config
+} else {
+    $sysmonConf = "https://raw.githubusercontent.com/bobby-tablez/FT-Sysmon-Config/master/ft-sysmonconfig-export.xml"
+}
 
-Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Downloading Sysmon..."
+# Begin actions
+Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Downloading Sysmon"
 try { 
     Invoke-WebRequest -URI $sysmonURL -OutFile $sysmonOut
-    Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Sysmon downloaded..."
+    Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Sysmon downloaded"
 } catch {
     $errorSysmon = $_.Exception.Message
     Write-Host "[ " -nonewline; Write-Host $ex -f red -nonewline; Write-Host " ] Error occurred while downloading Sysmon: $errorSysmon"
+    exit 1
 }
 
-Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Downloading Sysmon config import file..."
+Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Downloading Sysmon config import file"
 try { 
     Invoke-WebRequest -URI $sysmonConf -OutFile $sysmonConfOut
-    Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Import config file downloaded..."
+    # Attempt to load the file as an XML to validate its content
+    [xml]$xmlContent = Get-Content -Path $sysmonConfOut
+    Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Import config file downloaded and validated as XML"
 } catch {
     $errorXML = $_.Exception.Message
-    Write-Host "[ " -nonewline; Write-Host $ex -f red -nonewline; Write-Host " ] Error occurred while downloading the config import file: $errorXML"
+    if ($_ -is [System.Xml.XmlException]) {
+        Write-Host "[ " -nonewline; Write-Host $ex -f red -nonewline; Write-Host " ] The downloaded file is not a valid XML: $errorXML"
+        exit 1 
+    } else {
+        Write-Host "[ " -nonewline; Write-Host $ex -f red -nonewline; Write-Host " ] Error occurred while downloading the config import file: $errorXML"
+        exit 1
+    }
 }
 
-Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Extracting Sysmon archive..."
+Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Extracting Sysmon archive"
 try { 
     Expand-Archive $sysmonOut -Destination $env:temp -ErrorAction Stop -Force
-    Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Sysmon archive extracted..."
+    Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Sysmon archive extracted"
 } catch {
     $errorZIP = $_.Exception.Message
     Write-Host "[ " -nonewline; Write-Host $ex -f red -nonewline; Write-Host " ] Error occurred while extracting the Sysmon archive: $errorZIP"
+    exit 1
 }
 
 Function b64{
@@ -109,28 +134,28 @@ Function b64{
 if (b64) { 
     $service64 = Get-Service -Name Sysmon64 -ErrorAction SilentlyContinue
     if ($service64.Length -gt 0) {
-        Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Uninstalling Existing version of Sysmon64..."
+        Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Uninstalling Existing version of Sysmon64"
         Start-Process "Sysmon64.exe" -ArgumentList "-u" -Wait
     }
-    write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Installing Sysmon64..."
+    write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Installing Sysmon64"
     Start-Process -FilePath "$env:temp\Sysmon64.exe" -ArgumentList "-accepteula -i $sysmonConfOut" -Wait
 }
 else {
     $service = Get-Service -Name Sysmon -ErrorAction SilentlyContinue
     if ($service.Length -gt 0) {
-        Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Uninstalling Existing version of Sysmon..."
+        Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Uninstalling Existing version of Sysmon"
         Start-Process "Sysmon.exe" -ArgumentList "-u" -Wait
     }
-    write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Installing Sysmon..."
+    write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Installing Sysmon"
     Start-Process -FilePath "$env:temp\Sysmon.exe" -ArgumentList "-accepteula -i $sysmonConfOut" -Wait
 }
-Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Sysmon successfully installed!"
+Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Sysmon successfully installed"
 Write-Host ""
 
 if (-Not $sysmononly){
 
     # PowerShell logging registry changes
-    Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Enabling PowerShell scriptblock logging..."
+    Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Enabling PowerShell scriptblock logging"
     $PSregPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging"
     $PSregValName = "EnableScriptBlockLogging"
     $PSregValDat = 1
@@ -139,9 +164,9 @@ if (-Not $sysmononly){
         New-Item -Path $PSregPath -ItemType Directory -Force  | Out-Null
     }
     Set-ItemProperty -Path $PSregPath -Name $PSregValName -Value $PSregValDat -Type DWord  | Out-Null
-    Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] PowerShell Script Block Logging enabled!"
+    Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] PowerShell Script Block Logging enabled"
 
-    Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Enabling PowerShell module logging..."
+    Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Enabling PowerShell module logging"
     $PSMregPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ModuleLogging"
     $PSMregValName = "EnableModuleLogging"
     $PSMregValDat = 1
@@ -155,7 +180,7 @@ if (-Not $sysmononly){
 
 
     # Enabling EventID 4688 with command line logging
-    Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Enabling process logging (EVID 4688) w/ commandline..."
+    Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Enabling process logging (EVID 4688) w/ commandline"
     $AuditSubcategory = "Process Creation"
     $EnableAudit = "enable"
     $DisableAudit = "disable"
@@ -171,11 +196,11 @@ if (-Not $sysmononly){
     }
     Set-ItemProperty -Path $AuditCmdPath -Name $AuditCmdValName -Value $AuditCmdValDat -Type DWord
 
-    Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Event ID 4688 enabled with commandline!"
+    Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Event ID 4688 enabled with commandline"
 
 
     # Enabling other audit policies which might be useful (tune if required). Based on: https://www.ultimatewindowssecurity.com/wiki/page.aspx?spid=RecBaselineAudPol
-    Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Enabling other useful audit policies..."
+    Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Enabling other useful audit policies"
 
     Invoke-Expression -Command "auditpol /set /subcategory:`"Security State Change`" /success:$DisableAudit /failure:$DisableAudit" | Out-Null
     Invoke-Expression -Command "auditpol /set /subcategory:`"Security System Extension`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
@@ -230,7 +255,7 @@ if (-Not $sysmononly){
     Invoke-Expression -Command "auditpol /set /subcategory:`"Kerberos Authentication Service`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
 
     # Upate GPOs
-    Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Updating GPOs using gpupdate..."
+    Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Updating GPOs using gpupdate"
     Invoke-Expression -Command "gpupdate /force" | Out-Null
 };
 Write-Host -f green "`nDone!"
