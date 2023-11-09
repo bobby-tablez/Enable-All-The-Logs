@@ -1,6 +1,6 @@
 # Enable All The Logs!
 ![enable_all_the_logs_banner](https://raw.githubusercontent.com/bobby-tablez/Enable-All-The-Logs/main/enable_all_the_logs.png?raw=true) 
-This script is designed to be used in lab environments (or production if you are careful) where logging is critical for building detections or malware analysis. This can be used in production, however you might want to tune the GPO edits as needed. This was mostly designed to save time when spinning up new hosts in a lab environment. 
+This script automates enhancing logging telemetry on Windows hosts. It is designed specifically with threat detection in mind where logging is critical for detections in SIEM environments or in a lab setting for emulation, validation or for malware analysis. This can be used in production, however you may want to fork or clone the script to tune the GPO edits as needed as it will increase log volume significantly. 
 
 Tested on Windows Server 2019/2022 and Windows 10/11
 
