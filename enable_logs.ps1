@@ -176,7 +176,7 @@ if (-Not $sysmononly){
     }
     Set-ItemProperty -Path $PSMregPath -Name $PSMregValName -Value $PSMregValDat -Type DWord  | Out-Null
 
-    Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] PowerShell Module Logging enabled!"
+    Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] PowerShell Module Logging enabled"
 
 
     # Enabling EventID 4688 with command line logging
