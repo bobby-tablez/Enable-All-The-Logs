@@ -62,9 +62,9 @@ param(
 # Bypass the warning prompt when -y arguement is supplied
 if (-Not $y){
     if ($sysmononly){
-        $confirmation = $(Write-Host -f Yellow -NoNewLine "WARNING: This script will download and install Sysmon. Do you want to continue? (y/n): "; Read-Host)
+        $confirmation = $(Write-Host -f Yellow -NoNewLine "CAUTION: This script will download and install Sysmon. Do you want to continue? (y/n): "; Read-Host)
     }else {
-        $confirmation = $(Write-Host -f Yellow -NoNewLine "WARNING: This script will download and install Sysmon, and make GPO changes that will increase log volume on the host. Do you want to continue? (y/n): "; Read-Host)
+        $confirmation = $(Write-Host -f Yellow -NoNewLine "CAUTION: This script will download and install Sysmon and make GPO and registry changes that will increase log volume. Continue? (y/n): "; Read-Host)
     }
 
     if (-not($confirmation -eq 'y')) {
