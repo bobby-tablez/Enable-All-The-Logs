@@ -108,7 +108,7 @@ try {
 } catch {
     $errorXML = $_.Exception.Message
     if ($_ -is [System.Xml.XmlException]) {
-        Write-Host "[ " -nonewline; Write-Host $ex -f red -nonewline; Write-Host " ] The downloaded file is not a valid XML: $errorXML"
+        Write-Host "[ " -nonewline; Write-Host $ex -f red -nonewline; Write-Host " ] The downloaded config import file is not valid XML: $errorXML"
         exit 1 
     } else {
         Write-Host "[ " -nonewline; Write-Host $ex -f red -nonewline; Write-Host " ] Error occurred while downloading the config import file: $errorXML"
