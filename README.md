@@ -13,6 +13,8 @@ This script performs the following actions:
 * Enables event ID 4688
 * Enables command line logging into Process Start events (EVID 4688)
 * Enables GPO audit policies based on https://www.ultimatewindowssecurity.com/wiki/page.aspx?spid=RecBaselineAudPol
+* Updates GPOs
+* Cleans up temporary downloaded files
 
 ### Usage
 
