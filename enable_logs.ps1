@@ -2,7 +2,7 @@
 .VERSION 
     1.2
 .AUTHOR
-    bobby-tablez
+    bobby-tablez (Tim Peck)
 .GUID
     a5d40ad0-297b-4269-80f9-934f6341367c
 .SYNOPSIS
@@ -99,6 +99,7 @@ try {
     exit 1
 }
 
+# Sysmon XML file
 Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Downloading Sysmon config import file"
 try { 
     Invoke-WebRequest -URI $sysmonConf -OutFile $sysmonConfOut
@@ -116,6 +117,7 @@ try {
     }
 }
 
+# Extract Sysmon archive contents into %TEMP%
 Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Extracting Sysmon archive"
 try { 
     Expand-Archive $sysmonOut -Destination $env:temp -ErrorAction Stop -Force
@@ -127,25 +129,29 @@ try {
 }
 
 Function b64{
-    $b64test = [Environment]::Is64BitOperatingSystem
+    $b64test = [Environment]::Is64BitOperatingSystem #Used to install x86/x64 Sysmon per OS architecture
     return $b64test
 }
 
 if (b64) { 
+    # Uninstall if present (64-bit)
     $service64 = Get-Service -Name Sysmon64 -ErrorAction SilentlyContinue
     if ($service64.Length -gt 0) {
         Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Uninstalling Existing version of Sysmon64"
         Start-Process "Sysmon64.exe" -ArgumentList "-u" -Wait
     }
+    # Install Sysmon (64-bit)
     write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Installing Sysmon64"
     Start-Process -FilePath "$env:temp\Sysmon64.exe" -ArgumentList "-accepteula -i $sysmonConfOut" -Wait
 }
 else {
+    # Uninstall if present (32-bit)
     $service = Get-Service -Name Sysmon -ErrorAction SilentlyContinue
     if ($service.Length -gt 0) {
         Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Uninstalling Existing version of Sysmon"
         Start-Process "Sysmon.exe" -ArgumentList "-u" -Wait
     }
+    # Install Sysmon (32-bit)
     write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Installing Sysmon"
     Start-Process -FilePath "$env:temp\Sysmon.exe" -ArgumentList "-accepteula -i $sysmonConfOut" -Wait
 }
@@ -257,5 +263,9 @@ if (-Not $sysmononly){
     # Upate GPOs
     Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Updating GPOs using gpupdate"
     Invoke-Expression -Command "gpupdate /force" | Out-Null
+
+    # Clean Up
+    Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Cleaning up"
+    Remove-Item $sysmonOut,$sysmonConfOut,$env:temp\Sysmon.exe,$env:temp\sysmon64.exe,$env:temp\sysmon64a.exe
 };
 Write-Host -f green "`nDone!"
