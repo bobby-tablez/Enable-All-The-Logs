@@ -230,7 +230,7 @@ if (-Not $sysmononly){
     Invoke-Expression -Command "auditpol /set /subcategory:`"Application Generated`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
     Invoke-Expression -Command "auditpol /set /subcategory:`"Handle Manipulation`" /success:$DisableAudit /failure:$DisableAudit" | Out-Null
     Invoke-Expression -Command "auditpol /set /subcategory:`"File Share`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Filtering Platform Packet Drop`" /success:$DisableAudit /failure:$DisableAudit" | Out-Null
+    Invoke-Expression -Command "auditpol /set /subcategory:`"Filtering Platform Packet Drop`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
     Invoke-Expression -Command "auditpol /set /subcategory:`"Filtering Platform Connection`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
     Invoke-Expression -Command "auditpol /set /subcategory:`"Other Object Access Events`" /success:$DisableAudit /failure:$DisableAudit" | Out-Null
     Invoke-Expression -Command "auditpol /set /subcategory:`"Sensitive Privilege Use`" /success:$DisableAudit /failure:$DisableAudit" | Out-Null
@@ -243,7 +243,7 @@ if (-Not $sysmononly){
     Invoke-Expression -Command "auditpol /set /subcategory:`"Authentication Policy Change`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
     Invoke-Expression -Command "auditpol /set /subcategory:`"Authorization Policy Change`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
     Invoke-Expression -Command "auditpol /set /subcategory:`"MPSSVC Rule-Level Policy Change`" /success:$DisableAudit /failure:$DisableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Filtering Platform Policy Change`" /success:$DisableAudit /failure:$DisableAudit" | Out-Null
+    Invoke-Expression -Command "auditpol /set /subcategory:`"Filtering Platform Policy Change`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
     Invoke-Expression -Command "auditpol /set /subcategory:`"Other Policy Change Events`" /success:$DisableAudit /failure:$EnableAudit" | Out-Null
     Invoke-Expression -Command "auditpol /set /subcategory:`"User Account Management`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
     Invoke-Expression -Command "auditpol /set /subcategory:`"Computer Account Management`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
