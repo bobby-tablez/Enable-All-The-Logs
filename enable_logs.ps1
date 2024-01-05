@@ -259,6 +259,7 @@ if (-Not $sysmononly){
     Invoke-Expression -Command "auditpol /set /subcategory:`"Kerberos Service Ticket Operations`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
     Invoke-Expression -Command "auditpol /set /subcategory:`"Other Account Logon Events`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
     Invoke-Expression -Command "auditpol /set /subcategory:`"Kerberos Authentication Service`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
+    Invoke-Expression -Command "auditpol /set /subcategory:`"Plug and Play Events`" /success:$EnableAudit /failure:$DisableAudit" | Out-Null
 
     # Upate GPOs
     Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Updating GPOs using gpupdate"
