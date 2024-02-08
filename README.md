@@ -9,7 +9,7 @@ This script performs the following actions:
 * Downloads Sysmon config import file from: https://raw.githubusercontent.com/bobby-tablez/FT-Sysmon-Config/master/ft-sysmonconfig-export.xml
 * Installs Sysmon (reinstalls if already present)
 * Enables PowerShell script block logging (EVID 4104)
-* Ebables PowerShell module logging (EVID 4103)
+* Enables PowerShell module logging (EVID 4103)
 * Enables event ID 4688
 * Enables command line logging into Process Start events (EVID 4688)
 * Enables GPO audit policies based on https://www.ultimatewindowssecurity.com/wiki/page.aspx?spid=RecBaselineAudPol
