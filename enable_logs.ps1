@@ -51,13 +51,17 @@
 
 #>
 
-#Requires -RunAsAdministrator
-
 param(
     [switch]$sysmononly,
     [switch]$y,
     [string]$config
 )
+
+# Check for administrator privs
+if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
+    Write-Host -ForegroundColor Red "Enable All The Logs! requires Administrator privileges. Please rerun in an admin PowerShell console."
+    exit
+}
 
 # Bypass the warning prompt when -y arguement is supplied
 if (-Not $y){
