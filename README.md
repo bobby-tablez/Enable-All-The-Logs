@@ -22,7 +22,7 @@ The ` -sysmononly` argument can be passed into the script if your goal is to onl
 
 The ` -y` argument can also be used to skip the prompt message.
 
-The ` -config` argument is used to supply your own Sysmon XML config file, rather than the default mentioned above.
+The ` -config` argument is used to supply a direct URL your own Sysmon XML config file, rather than the default mentioned above.
 
 ### Execute via PowerShell:
 ```powershell
