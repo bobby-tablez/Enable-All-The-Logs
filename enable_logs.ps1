@@ -188,105 +188,127 @@ if (-Not $sysmononly){
 
     Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] PowerShell Module Logging enabled"
 
+    # Applies defined policies in $auditSettings
+    function ApplyPolicy {
+        param (
+            [Parameter(Mandatory)]
+            [string]$subcategory,
 
-    # Enabling EventID 4688 with command line logging
-    Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Enabling process logging (EVID 4688) w/ commandline"
-    $AuditSubcategory = "Process Creation"
-    $EnableAudit = "enable"
-    $DisableAudit = "disable"
+            [Parameter(Mandatory)]
+            [string]$success,
 
-    Invoke-Expression -Command "auditpol /set /subcategory:`"$AuditSubcategory`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
+            [Parameter(Mandatory)]
+            [string]$failure
+        )
 
-    $AuditCmdPath = "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System\Audit"
-    $AuditCmdValName = "ProcessCreationIncludeCmdLine_Enabled"
-    $AuditCmdValDat = 1
-
-    if (-not (Test-Path $AuditCmdPath)) {
-        New-Item -Path $AuditCmdPath -ItemType Directory -Force
+        $invokeAudit = "auditpol /set /subcategory:`"$subcategory`" /success:$success /failure:$failure"
+        Invoke-Expression -Command $invokeAudit | Out-Null
     }
-    Set-ItemProperty -Path $AuditCmdPath -Name $AuditCmdValName -Value $AuditCmdValDat -Type DWord
 
+    # Used to enable CommandLine w/4688
+    function ProcStartCMD {
+        $cmdRegPath = "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System\Audit"
+        $cmdRegValue = "ProcessCreationIncludeCmdLine_Enabled"
+        $cmdRegData = 1
+
+        if (-not (Test-Path $cmdRegPath)) {
+            New-Item -Path $cmdRegPath -ItemType Directory -Force
+        }
+        Set-ItemProperty -Path $cmdRegPath -Name $cmdRegValue -Value $cmdRegData -Type DWord
+    }
+
+    Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Configuring Audit Policies"
+
+    # Policy settings
+    $auditSettings = @{
+
+        # Account Logon
+        "Credential Validation" =                    @{ Success="enable"; Failure="enable" }
+        "Kerberos Authentication Service" =          @{ Success="enable"; Failure="enable" }
+        "Kerberos Service Ticket Operations" =       @{ Success="enable"; Failure="enable" }
+        "Other Account Logon Events" =               @{ Success="enable"; Failure="enable" }
+
+        # Account Management
+        "Application Group Management" =             @{ Success="enable"; Failure="enable" }
+        "Computer Account Management" =              @{ Success="enable"; Failure="enable" }
+        "Distribution Group Management" =            @{ Success="enable"; Failure="enable" }
+        "Other Account Management Events" =          @{ Success="enable"; Failure="enable" }
+        "Security Group Management" =                @{ Success="enable"; Failure="enable" }
+        "User Account Management" =                  @{ Success="enable"; Failure="enable" }
+
+        # Detailed Tracking
+        "DPAPI Activity" =                           @{ Success="enable"; Failure="enable" }
+        "Plug and Play Events" =                     @{ Success="enable"; Failure="disable"}
+        "Process Creation" =                         @{ Success="enable"; Failure="enable" }
+        "Process Termination" =                      @{ Success="enable"; Failure="enable" }
+        "RPC Events" =                               @{ Success="enable"; Failure="enable" }
+
+        # DS Access
+        "Detailed Directory Service Replication" =   @{ Success="disable"; Failure="disable"}
+        "Directory Service Access" =                 @{ Success="enable"; Failure="enable" }
+        "Directory Service Changes" =                @{ Success="enable"; Failure="enable" }
+        "Directory Service Replication" =            @{ Success="enable"; Failure="enable" }
+
+        # Logon/Logoff
+        "Account Lockout" =                          @{ Success="enable"; Failure="enable" }
+        "User / Device Claims" =                     @{ Success="enable"; Failure="enable" }
+        "Group Membership" =                         @{ Success="enable"; Failure="enable" }
+        "IPsec Extended Mode" =                      @{ Success="disable"; Failure="disable"}
+        "IPsec Main Mode" =                          @{ Success="disable"; Failure="disable"}
+        "IPsec Quick Mode" =                         @{ Success="disable"; Failure="disable"}
+        "Logoff" =                                   @{ Success="enable"; Failure="enable" }
+        "Logon" =                                    @{ Success="enable"; Failure="enable" }
+        "Network Policy Server" =                    @{ Success="disable"; Failure="disable"}
+        "Other Logon/Logoff Events" =                @{ Success="enable"; Failure="enable" }
+        "Special Logon" =                            @{ Success="disable"; Failure="disable"}
+
+        # Object Access
+        "Application Generated" =                    @{ Success="enable"; Failure="enable" }
+        "Certification Services" =                   @{ Success="enable"; Failure="enable" }
+        "Detailed File Share" =                      @{ Success="enable"; Failure="enable" }
+        "File Share" =                               @{ Success="enable"; Failure="enable" }
+        "File System" =                              @{ Success="enable"; Failure="enable" }
+        "Filtering Platform Connection" =            @{ Success="enable"; Failure="enable" }
+        "Filtering Platform Packet Drop" =           @{ Success="enable"; Failure="enable" }
+        "Handle Manipulation" =                      @{ Success="enable"; Failure="enable" }
+        "Kernel Object" =                            @{ Success="enable"; Failure="enable" }
+        "Other Object Access Events" =               @{ Success="disable"; Failure="disable"}
+        "Registry" =                                 @{ Success="enable"; Failure="enable" }
+        "SAM" =                                      @{ Success="disable"; Failure="disable"}
+
+        # Policy Change
+        "Audit Policy Change" =                      @{ Success="enable"; Failure="enable" }
+        "Authentication Policy Change" =             @{ Success="enable"; Failure="enable" }
+        "Authorization Policy Change" =              @{ Success="enable"; Failure="enable" }
+        "Filtering Platform Policy Change" =         @{ Success="enable"; Failure="enable" }
+        "MPSSVC Rule-Level Policy Change" =          @{ Success="disable"; Failure="disable"}
+        "Other Policy Change Events" =               @{ Success="disable"; Failure="disable"}
+
+        # Privilege Use
+        "Non Sensitive Privilege Use" =              @{ Success="disable"; Failure="disable"}
+        "Other Privilege Use Events" =               @{ Success="disable"; Failure="disable"}
+        "Sensitive Privilege Use" =                  @{ Success="disable"; Failure="disable"}
+
+        # System
+        "IPsec Driver" =                             @{ Success="disable"; Failure="disable"}
+        "Other System Events" =                      @{ Success="disable"; Failure="disable"}
+        "Security State Change" =                    @{ Success="disable"; Failure="disable"}
+        "Security System Extension" =                @{ Success="enable"; Failure="enable" }
+        "System Integrity" =                         @{ Success="enable"; Failure="enable" }
+    }
+
+    # Apply each policy
+    foreach ($policy in $auditSettings.Keys) {
+        $settings = $auditSettings[$policy]
+        ApplyPolicy -subcategory $policy -success $settings.Success -failure $settings.Failure
+    }
+    Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Audit Policies Configured"
+
+    # Enable command line w/ Process Creation
+    Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Enabling command line logging w/ EVID: 4688"
+    ProcStartCMD
     Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Event ID 4688 enabled with commandline"
-
-
-    # Enabling other audit policies which might be useful (tune if required). Based on: https://www.ultimatewindowssecurity.com/wiki/page.aspx?spid=RecBaselineAudPol
-    Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Enabling other useful audit policies"
-
-    # Account Logon
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Credential Validation`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Kerberos Authentication Service`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Kerberos Service Ticket Operations`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Other Account Logon Events`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
     
-    # Account Management
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Application Group Management`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Computer Account Management`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Distribution Group Management`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Other Account Management Events`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Security Group Management`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"User Account Management`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
-
-    # Detailed Tracking
-    Invoke-Expression -Command "auditpol /set /subcategory:`"DPAPI Activity`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Plug and Play Events`" /success:$EnableAudit /failure:$DisableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Process Termination`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"RPC Events`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
-
-    # DS Access
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Detailed Directory Service Replication`" /success:$DisableAudit /failure:$DisableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Directory Service Access`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Directory Service Changes`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Directory Service Replication`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null    
-
-    # Logon/Logoff
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Account Lockout`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"User / Device Claims`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Group Membership`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"IPsec Extended Mode`" /success:$DisableAudit /failure:$DisableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"IPsec Main Mode`" /success:$DisableAudit /failure:$DisableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"IPsec Quick Mode`" /success:$DisableAudit /failure:$DisableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Logoff`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Logon`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Network Policy Server`" /success:$DisableAudit /failure:$DisableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Other Logon/Logoff Events`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Special Logon`" /success:$DisableAudit /failure:$DisableAudit" | Out-Null
-    
-    # Object Access
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Application Generated`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Certification Services`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Detailed File Share`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"File Share`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"File System`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Filtering Platform Connection`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Filtering Platform Packet Drop`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Handle Manipulation`" /success:$DisableAudit /failure:$DisableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Kernel Object`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Other Object Access Events`" /success:$DisableAudit /failure:$DisableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Registry`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Removable Storage`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"SAM`" /success:$DisableAudit /failure:$DisableAudit" | Out-Null
-
-    # Policy Change
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Audit Policy Change`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Authentication Policy Change`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Authorization Policy Change`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Filtering Platform Policy Change`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"MPSSVC Rule-Level Policy Change`" /success:$DisableAudit /failure:$DisableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Other Policy Change Events`" /success:$DisableAudit /failure:$EnableAudit" | Out-Null
-
-    # Privilege Use
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Non Sensitive Privilege Use`" /success:$DisableAudit /failure:$DisableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Other Privilege Use Events`" /success:$DisableAudit /failure:$DisableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Sensitive Privilege Use`" /success:$DisableAudit /failure:$DisableAudit" | Out-Null
-
-    # System
-    Invoke-Expression -Command "auditpol /set /subcategory:`"IPsec Driver`" /success:$DisableAudit /failure:$DisableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Other System Events`" /success:$DisableAudit /failure:$DisableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Security State Change`" /success:$DisableAudit /failure:$DisableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"Security System Extension`" /success:$EnableAudit /failure:$EnableAudit" | Out-Null
-    Invoke-Expression -Command "auditpol /set /subcategory:`"System Integrity`" /success:$EnableAudit /failure:$DisableAudit" | Out-Null
-    
-
     # Upate GPOs using gpupdate
     Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Updating GPOs using gpupdate"
     Invoke-Expression -Command "gpupdate /force" | Out-Null
