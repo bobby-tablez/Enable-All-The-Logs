@@ -272,7 +272,7 @@ if (-Not $sysmononly){
         "Filtering Platform Packet Drop" =           @{ Success="enable"; Failure="enable" }
         "Handle Manipulation" =                      @{ Success="enable"; Failure="enable" }
         "Kernel Object" =                            @{ Success="enable"; Failure="enable" }
-        "Other Object Access Events" =               @{ Success="disable"; Failure="disable"}
+        "Other Object Access Events" =               @{ Success="enable"; Failure="enable"}
         "Registry" =                                 @{ Success="enable"; Failure="enable" }
         "SAM" =                                      @{ Success="disable"; Failure="disable"}
 
