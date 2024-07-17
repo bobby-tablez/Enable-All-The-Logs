@@ -24,6 +24,10 @@ The ` -y` argument can also be used to skip the prompt message.
 
 The ` -config` argument is used to supply a direct URL your own Sysmon XML config file, rather than the default mentioned above.
 
+The ` -driver` argument modifies the Sysmon driver name. Useful for counter-analysis or evasive operations.
+
+The ` -name` argument renames the Sysmon binary prior to installation. This effectively modifies the service name. Again, useful for evasive operations. Source: https://www.darkoperator.com/blog/2018/10/5/operating-offensively-against-sysmon
+
 ### Execute via PowerShell:
 ```powershell
 irm https://raw.githubusercontent.com/bobby-tablez/Enable-All-The-Logs/main/enable_logs.ps1|iex
@@ -43,7 +47,7 @@ if ($sysmonProc) {
     $script = "$env:TMP\enable_logs.ps1"
     
     Invoke-WebRequest -Uri $Url -OutFile $script -UseBasicParsing
-    $run = "$script -sysmononly -y"
+    $run = "$script -sysmononly -y -driver sccm -name sccm_service.exe"
     Invoke-Expression $run
 
     Start-Sleep -Seconds 2
