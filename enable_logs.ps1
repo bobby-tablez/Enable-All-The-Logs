@@ -231,7 +231,7 @@ If ($sysmononly) {
 } Else {
     Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Installing Sysmon"
 }
-Start-Process -FilePath $sysmonExe -ArgumentList "-accepteula -i $config $driver" -Wait
+Start-Process -FilePath $sysmonExe -ArgumentList "-accepteula -i $sysmonConfOut $driver" -Wait
 
 Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Sysmon successfully installed"
 Write-Host ""
