@@ -191,7 +191,7 @@ Function Uninstall-Sysmon {
     $service = Get-Service -Name $serviceName -ErrorAction SilentlyContinue
     if ($service.Length -gt 0) {
         Write-Host "[ " -nonewline; Write-Host $cm -f green -nonewline; Write-Host " ] Uninstalling Existing version of $serviceName"
-        Start-Process -FilePath $exePath -ArgumentList "-u" -Wait
+        Start-Process -FilePath $exePath -ArgumentList "-u force" -Wait
         Sleep 3
     }
 }
