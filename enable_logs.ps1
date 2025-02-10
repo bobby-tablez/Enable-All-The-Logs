@@ -12,7 +12,7 @@
 .NOTES 
     Use at your own risk.
 .LINK 
-    https://raw.githubusercontent.com/bobby-tablez/Invoke-XORfuscation/main/Invoke-XORfuscation.ps1
+    https://github.com/bobby-tablez/Enable-All-The-Logs/blob/main/enable_logs.ps1
     https://www.securonix.com/blog/improving-blue-team-threat-detection-with-enhanced-siem-telemetry/
 .PARAMETER -sysmononly 
     This will ONLY download and install sysmon. If sysmon is already present, it will perform a reinstall using the provided XML import config file.    
